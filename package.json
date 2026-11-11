@@ -7,7 +7,10 @@
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
-    "preview": "node scripts/serve.mjs --dist"
+    "preview": "node scripts/serve.mjs --dist",
+    "start": "node scripts/serve.mjs --dist"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }
