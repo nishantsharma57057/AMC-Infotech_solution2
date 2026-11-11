@@ -4,7 +4,7 @@ import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const preview = process.argv.includes('--dist');
+const preview = process.argv.includes('--dist') || process.env.NODE_ENV === 'production';
 const port = Number(process.env.PORT || 5173);
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
 
@@ -27,4 +27,4 @@ createServer(async (req, res) => {
   } catch {
     res.writeHead(404).end('Not found');
   }
-}).listen(port, '127.0.0.1', () => console.log(`AMC website: http://localhost:${port} (${preview ? 'build preview' : 'editable source; refresh after saving changes'})`));
+}).listen(port, '0.0.0.0', () => console.log(`AMC website: http://localhost:${port} (${preview ? 'build preview' : 'editable source; refresh after saving changes'})`));
