@@ -4,88 +4,200 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>AMC Admin | Inventory</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#0b1730">
+  <title>AMC Control Centre | Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body class="admin-page">
-  <main class="admin-shell">
-    <header class="admin-head">
-      <a href="/" class="brand"><strong>amc</strong><small>INFOTECH SOLUTION</small></a>
-      <h1>Inventory Admin</h1>
-      <button id="logout" class="button outline admin-hidden" type="button">Sign out</button>
-    </header>
-
-    <section id="setup" class="admin-card admin-hidden">
-      <h2>Firebase setup required</h2>
-      <p>Complete FIREBASE_SETUP.md and configure src/firebase-config.js.</p>
+  <main class="admin-auth-shell">
+    <section id="setup" class="admin-auth-card admin-hidden">
+      <div class="admin-brand-mark">amc<span>+</span></div>
+      <p class="admin-kicker">CONTROL CENTRE</p>
+      <h1>Firebase setup required</h1>
+      <p>Configure the Firebase project in <code>firebase-config.js</code> before opening the admin dashboard.</p>
     </section>
 
-    <section id="login" class="admin-card admin-login">
-      <h2>Admin sign in</h2>
+    <section id="login" class="admin-auth-card">
+      <div class="admin-brand-mark">amc<span>+</span></div>
+      <p class="admin-kicker">SECURE ADMIN ACCESS</p>
+      <h1>Welcome back.</h1>
+      <p class="admin-auth-copy">Sign in to manage live laptop inventory and your store profile.</p>
       <form id="loginForm">
-        <div class="admin-field">
-          <label for="adminEmail">Email</label>
-          <input id="adminEmail" name="email" type="email" autocomplete="username" required>
-        </div>
-        <div class="admin-field">
-          <label for="adminPassword">Password</label>
-          <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
-        </div>
-        <button class="button" style="margin-top:16px" type="submit">Sign in</button>
+        <label class="admin-input-label">Email address
+          <input id="adminEmail" name="email" type="email" autocomplete="username" placeholder="you@company.com" required>
+        </label>
+        <label class="admin-input-label">Password
+          <input id="adminPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+        </label>
+        <button class="admin-primary-btn admin-full-btn" type="submit">Sign in to dashboard <span>↗</span></button>
       </form>
-      <p id="loginStatus" class="admin-status" role="status" aria-live="polite"></p>
+      <p id="loginStatus" class="admin-feedback" role="status" aria-live="polite"></p>
+      <div class="admin-auth-foot">Restricted to approved, email-verified AMC administrators.</div>
     </section>
 
-    <section id="verify" class="admin-card admin-login admin-hidden">
-      <h2>Verify your email</h2>
-      <p>This AMC admin account is approved, but Firebase has not marked its email as verified yet.</p>
-      <p><strong id="verifyEmail"></strong></p>
-      <div class="admin-actions">
-        <button id="resendVerification" class="button" type="button">Resend verification email</button>
-        <button id="checkVerification" class="button outline" type="button">I've verified — check again</button>
+    <section id="verify" class="admin-auth-card admin-hidden">
+      <div class="admin-brand-mark">amc<span>+</span></div>
+      <p class="admin-kicker">ONE QUICK SECURITY CHECK</p>
+      <h1>Verify your email.</h1>
+      <p>This account is approved for AMC administration, but Firebase has not confirmed its email address yet.</p>
+      <strong id="verifyEmail" class="admin-verify-email"></strong>
+      <div class="admin-auth-actions">
+        <button id="resendVerification" class="admin-primary-btn" type="button">Resend verification email</button>
+        <button id="checkVerification" class="admin-secondary-btn" type="button">I've verified — check again</button>
       </div>
-      <p id="verifyStatus" class="admin-status" role="status" aria-live="polite">Open the verification email, click its link, then return here and check again.</p>
-    </section>
-
-    <section id="dashboard" class="admin-hidden">
-      <div class="admin-card">
-        <h2 id="formTitle">Add laptop</h2>
-        <form id="productForm" class="admin-form">
-          <input type="hidden" name="id">
-          <div class="admin-field"><label>Brand</label><select name="brand"><option>Apple</option><option>Dell</option><option>HP</option><option>Lenovo</option><option>ASUS</option><option>Acer</option><option>Samsung</option></select></div>
-          <div class="admin-field"><label>Product name</label><input name="name" required placeholder="MacBook Air M2"></div>
-          <div class="admin-field"><label>Model</label><input name="model" required></div>
-          <div class="admin-field"><label>Processor / chip</label><input name="chip" required></div>
-          <div class="admin-field"><label>RAM (GB)</label><input name="ram" type="number" min="4" required></div>
-          <div class="admin-field"><label>Storage (GB)</label><input name="storage" type="number" min="64" required></div>
-          <div class="admin-field"><label>Price (₹)</label><input name="price" type="number" min="1" required></div>
-          <div class="admin-field"><label>Quantity</label><input name="qty" type="number" min="0" required></div>
-          <div class="admin-field"><label>Warranty</label><input name="warranty" placeholder="Not specified"></div>
-          <div class="admin-field"><label>Condition</label><select name="condition"><option>Refurbished</option><option>Excellent</option><option>Good</option><option>Fair</option><option>New</option></select></div>
-          <div class="admin-field full"><label>Product image URL (HTTPS)</label><input name="imageUrl" type="url" placeholder="https://..."></div>
-          <div class="admin-field full"><label>Description</label><textarea name="desc" rows="3"></textarea></div>
-          <div class="admin-field"><label>Published</label><select name="active"><option value="true">Yes</option><option value="false">No</option></select></div>
-          <div class="admin-field"><label>Use cases</label><input name="use" value="Students, Office, Programming"></div>
-          <div class="admin-field full admin-actions">
-            <button class="button" type="submit">Save laptop</button>
-            <button type="button" id="clear" class="button outline">Clear</button>
-          </div>
-        </form>
-        <p id="saveStatus" class="admin-status" role="status" aria-live="polite"></p>
-      </div>
-
-      <div class="admin-card" style="margin-top:20px">
-        <h2>Inventory</h2>
-        <p id="count" class="admin-muted"></p>
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead><tr><th>Image</th><th>Product</th><th>Specs</th><th>Qty</th><th>Price</th><th>Actions</th></tr></thead>
-            <tbody id="rows"></tbody>
-          </table>
-        </div>
-      </div>
+      <p id="verifyStatus" class="admin-feedback" role="status" aria-live="polite">Check your inbox and Spam folder for the Firebase verification link.</p>
+      <button id="verifyLogout" class="admin-text-btn" type="button">Sign out</button>
     </section>
   </main>
+
+  <div id="dashboard" class="admin-layout admin-hidden">
+    <aside class="admin-sidebar">
+      <a class="admin-sidebar-brand" href="/"><span class="admin-brand-mark">amc<span>+</span></span><span><b>AMC INFOTECH</b><small>CONTROL CENTRE</small></span></a>
+      <div class="admin-sidebar-label">WORKSPACE</div>
+      <nav class="admin-side-nav" aria-label="Admin sections">
+        <button class="active" type="button" data-view="overview"><span class="nav-symbol">◫</span>Overview</button>
+        <button type="button" data-view="inventory"><span class="nav-symbol">▤</span>Inventory <span id="navInventoryCount" class="nav-count">0</span></button>
+        <button type="button" data-view="settings"><span class="nav-symbol">⚙</span>Business profile</button>
+      </nav>
+      <div class="admin-sidebar-bottom">
+        <div class="admin-online"><i></i><span>Firebase connected<small>Live inventory sync</small></span></div>
+        <a href="/" target="_blank" rel="noopener" class="admin-preview-link">↗ View live website</a>
+        <button id="logout" class="admin-logout-btn" type="button">⇥ <span>Sign out</span></button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div><div class="admin-breadcrumb">AMC INFOTECH <span>/</span> <b id="pageBreadcrumb">Overview</b></div><h1 id="pageTitle">Good to see you.</h1></div>
+        <div class="admin-user-chip"><span class="admin-avatar">A</span><span><b>Administrator</b><small id="adminIdentity">Verified admin</small></span></div>
+      </header>
+
+      <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
+
+      <section id="overviewPanel" class="admin-panel">
+        <div class="admin-welcome-row">
+          <div><p class="admin-kicker">YOUR STORE AT A GLANCE</p><h2>Everything in one place.</h2><p>Inventory here is the same inventory connected to your public shop.</p></div>
+          <div class="admin-welcome-actions"><button id="overviewAddBtn" class="admin-primary-btn" type="button">＋ Add a laptop</button><button id="refreshBtn" class="admin-secondary-btn" type="button">↻ Refresh data</button></div>
+        </div>
+
+        <div class="admin-stats-grid">
+          <article class="admin-stat-card stat-blue"><div class="stat-icon">▤</div><span>Total listings</span><strong id="metricTotal">—</strong><small>All products in Firebase</small></article>
+          <article class="admin-stat-card stat-green"><div class="stat-icon">↗</div><span>Published on website</span><strong id="metricLive">—</strong><small>Visible in the public shop</small></article>
+          <article class="admin-stat-card stat-amber"><div class="stat-icon">◷</div><span>Hidden listings</span><strong id="metricHidden">—</strong><small>Saved, but not published</small></article>
+          <article class="admin-stat-card stat-violet"><div class="stat-icon">₹</div><span>Stock value</span><strong id="metricValue">—</strong><small>Published and hidden stock</small></article>
+        </div>
+
+        <div class="admin-overview-grid">
+          <section class="admin-surface">
+            <div class="admin-section-heading"><div><p class="admin-kicker">LATEST UPDATES</p><h3>Recently managed laptops</h3></div><button type="button" class="admin-link-btn" data-go="inventory">View all inventory →</button></div>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>PRODUCT</th><th>CONFIGURATION</th><th>PRICE</th><th>STATUS</th></tr></thead><tbody id="recentRows"></tbody></table></div>
+            <div id="recentEmpty" class="admin-empty admin-hidden">No inventory yet. Add your first laptop to get started.</div>
+          </section>
+          <section class="admin-surface admin-quick-card">
+            <p class="admin-kicker">QUICK ACTIONS</p><h3>Keep the store fresh.</h3>
+            <button type="button" data-go="inventory" class="admin-quick-action"><span>▤</span><span><b>Manage inventory</b><small>Edit prices, quantity and visibility</small></span><i>→</i></button>
+            <button type="button" data-go="settings" class="admin-quick-action"><span>⌖</span><span><b>Update contact details</b><small>Phone, WhatsApp, address and social links</small></span><i>→</i></button>
+            <div class="admin-sync-note"><i></i><span><b>Live shop connection</b><small>Published products sync to amcinfotech.com</small></span></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="inventoryPanel" class="admin-panel admin-hidden">
+        <div class="admin-page-heading"><div><p class="admin-kicker">PRODUCT MANAGEMENT</p><h2>Your laptop inventory.</h2><p>Manage the same listings customers see in the Shop section.</p></div><button id="addProductButton" class="admin-primary-btn" type="button">＋ Add laptop</button></div>
+        <div class="admin-inventory-toolbar">
+          <label class="admin-search"><span>⌕</span><input id="inventorySearch" type="search" placeholder="Search name, model, brand or chip…"></label>
+          <select id="inventoryFilter" aria-label="Filter inventory"><option value="all">All listings</option><option value="published">Published</option><option value="hidden">Hidden</option><option value="out">Out of stock</option></select>
+          <span id="inventoryCount" class="admin-result-count">Loading listings…</span>
+        </div>
+        <section class="admin-surface">
+          <div class="admin-table-wrap"><table class="admin-table admin-inventory-table"><thead><tr><th>PRODUCT</th><th>SPECIFICATIONS</th><th>QUANTITY</th><th>PRICE</th><th>WEBSITE STATUS</th><th>ACTIONS</th></tr></thead><tbody id="productRows"></tbody></table></div>
+          <div id="inventoryEmpty" class="admin-empty admin-hidden"><div>▤</div><b>No laptops found</b><span>Try another search or add a new product.</span></div>
+        </section>
+        <p class="admin-footnote">Tip: switch a listing to Hidden to remove it from the public shop without deleting its product details.</p>
+      </section>
+
+      <section id="settingsPanel" class="admin-panel admin-hidden">
+        <div class="admin-page-heading"><div><p class="admin-kicker">WEBSITE PROFILE</p><h2>Make it easy to reach you.</h2><p>Changes saved here update the contact and social sections on your public website.</p></div><span class="admin-save-indicator"><i></i> Connected to live website</span></div>
+        <form id="siteSettingsForm" class="admin-settings-form">
+          <section class="admin-surface admin-settings-section">
+            <div class="admin-settings-title"><span>01</span><div><h3>Store identity</h3><p>Your business name and short brand message.</p></div></div>
+            <div class="admin-settings-grid">
+              <label class="admin-input-label">Business / store name<input name="businessName" maxlength="100" required></label>
+              <label class="admin-input-label">Footer tagline<input name="tagline" maxlength="160" placeholder="A short line about your store"></label>
+              <label class="admin-input-label admin-span-2">Announcement bar message<input name="announcement" maxlength="160" placeholder="A short message shown at the top of the website"></label>
+            </div>
+          </section>
+
+          <section class="admin-surface admin-settings-section">
+            <div class="admin-settings-title"><span>02</span><div><h3>Contact & enquiries</h3><p>Use real business details so customers can call or message your team.</p></div></div>
+            <div class="admin-settings-grid">
+              <label class="admin-input-label">Phone number<input name="phone" type="tel" inputmode="tel" placeholder="+91 98765 43210"></label>
+              <label class="admin-input-label">WhatsApp number<input name="whatsapp" type="tel" inputmode="tel" placeholder="91 98765 43210"></label>
+              <label class="admin-input-label">Business email<input name="email" type="email" placeholder="sales@yourdomain.com"></label>
+              <label class="admin-input-label">WhatsApp opening message<input name="whatsappMessage" maxlength="240" placeholder="Hi AMC Infotech, I am interested in a laptop."></label>
+            </div>
+            <div class="admin-form-hint">Leave a field blank to hide that contact option on the website. Use the full country code for WhatsApp, for example 91 followed by the mobile number.</div>
+          </section>
+
+          <section class="admin-surface admin-settings-section">
+            <div class="admin-settings-title"><span>03</span><div><h3>Store location</h3><p>Address, map and timings customers see before visiting.</p></div></div>
+            <div class="admin-settings-grid">
+              <label class="admin-input-label admin-span-2">Street / market / building<input name="address" maxlength="180" placeholder="Sanjay Place"></label>
+              <label class="admin-input-label">City<input name="city" maxlength="80" required></label>
+              <label class="admin-input-label">State<input name="state" maxlength="80" required></label>
+              <label class="admin-input-label">PIN code<input name="pincode" inputmode="numeric" maxlength="10" placeholder="PIN code"></label>
+              <label class="admin-input-label">Opening hours<input name="openingHours" maxlength="160" placeholder="Mon–Sat, 10:30 AM – 8:00 PM"></label>
+              <label class="admin-input-label admin-span-2">Google Maps share URL<input name="mapsUrl" type="url" placeholder="https://maps.google.com/..."></label>
+              <label class="admin-input-label admin-span-2">Google Maps embed URL <span class="admin-optional">optional</span><input name="mapsEmbedUrl" type="url" placeholder="https://www.google.com/maps/embed?..."></label>
+            </div>
+            <div class="admin-form-hint">Do not enter a guessed shop number or opening time. Keep the area-level map until you have the exact store pin.</div>
+          </section>
+
+          <section class="admin-surface admin-settings-section">
+            <div class="admin-settings-title"><span>04</span><div><h3>Social channels</h3><p>Connect the profiles customers can follow and message.</p></div></div>
+            <div class="admin-settings-grid">
+              <label class="admin-input-label">Instagram profile URL<input name="instagramUrl" type="url" placeholder="https://www.instagram.com/yourhandle/"></label>
+              <label class="admin-input-label">Instagram handle<input name="instagramHandle" maxlength="60" placeholder="@yourhandle"></label>
+              <label class="admin-input-label">Facebook page URL<input name="facebookUrl" type="url" placeholder="https://www.facebook.com/yourpage"></label>
+              <label class="admin-input-label">YouTube channel URL<input name="youtubeUrl" type="url" placeholder="https://www.youtube.com/@yourchannel"></label>
+              <label class="admin-input-label admin-span-2">LinkedIn page URL<input name="linkedinUrl" type="url" placeholder="https://www.linkedin.com/company/yourpage"></label>
+            </div>
+            <div class="admin-form-hint">Only add official business profiles. Blank social links are hidden from the public site.</div>
+          </section>
+
+          <div class="admin-settings-submit"><p id="settingsStatus" class="admin-feedback" role="status" aria-live="polite">Your profile is stored in Firebase and read by the public website.</p><button class="admin-primary-btn" type="submit">Save website details <span>↗</span></button></div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="productDialog" class="admin-product-dialog">
+    <form id="productForm" method="dialog">
+      <div class="admin-dialog-head"><div><p class="admin-kicker">INVENTORY ITEM</p><h2 id="productDialogTitle">Add a laptop</h2><p>Saved listings appear in your public shop when published.</p></div><button type="button" id="closeProductDialog" class="admin-dialog-close" aria-label="Close">×</button></div>
+      <input type="hidden" name="id">
+      <div class="admin-dialog-grid">
+        <label class="admin-input-label">Brand<select name="brand"><option>Apple</option><option>Dell</option><option>HP</option><option>Lenovo</option><option>ASUS</option><option>Acer</option><option>Samsung</option><option>Other</option></select></label>
+        <label class="admin-input-label">Product name<input name="name" required maxlength="100" placeholder="MacBook Air M2"></label>
+        <label class="admin-input-label">Model / model code<input name="model" required maxlength="100" placeholder="A2681"></label>
+        <label class="admin-input-label">Processor / chip<input name="chip" required maxlength="100" placeholder="Apple M2 / Intel Core i5"></label>
+        <label class="admin-input-label">RAM (GB)<input name="ram" type="number" min="1" max="512" required></label>
+        <label class="admin-input-label">Storage (GB)<input name="storage" type="number" min="1" max="8192" required></label>
+        <label class="admin-input-label">Price (₹)<input name="price" type="number" min="0" required></label>
+        <label class="admin-input-label">Quantity<input name="qty" type="number" min="0" required></label>
+        <label class="admin-input-label">Condition<select name="condition"><option>Refurbished</option><option>Excellent</option><option>Good</option><option>Fair</option><option>New</option></select></label>
+        <label class="admin-input-label">Warranty<input name="warranty" maxlength="120" placeholder="Not specified"></label>
+        <label class="admin-input-label admin-span-2">Product image URL (HTTPS)<input name="imageUrl" type="url" placeholder="https://..."></label>
+        <label class="admin-input-label admin-span-2">Description<textarea name="desc" rows="3" maxlength="1000" placeholder="Battery health, included accessories, unit notes..."></textarea></label>
+        <label class="admin-input-label admin-span-2">Use cases (comma separated)<input name="use" value="Students, Office, Programming"></label>
+        <label class="admin-toggle-field"><input name="active" type="checkbox" checked><span><b>Publish on website</b><small>Visible in the public Shop catalogue</small></span></label>
+      </div>
+      <div class="admin-dialog-actions"><span id="productFormStatus" class="admin-feedback" role="status" aria-live="polite"></span><button type="button" id="cancelProduct" class="admin-secondary-btn">Cancel</button><button type="submit" class="admin-primary-btn">Save laptop</button></div>
+    </form>
+  </dialog>
+
   <script type="module" src="admin.js"></script>
 </body>
 </html>
