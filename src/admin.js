@@ -83,6 +83,7 @@ function isAuthorizedAdmin(user) {
 }
 
 function showLogin(message = "") {
+  show(".admin-auth-shell", true);
   show("#login", true);
   show("#verify", false);
   show("#setup", false);
@@ -102,6 +103,7 @@ async function openDashboard(user) {
   show("#login", false);
   show("#verify", false);
   show("#setup", false);
+  show(".admin-auth-shell", false);
   show("#dashboard", true);
   $("#adminIdentity").textContent = user.email || "Verified admin";
   await Promise.all([loadProducts(), loadSiteSettings()]);
