@@ -1,7 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
  match /databases/{database}/documents {
-  function isAdmin(){return request.auth != null && request.auth.uid == "5KgMz6p7RKeD75aSzaaan4Yodyb2" && request.auth.token.email_verified == true;}
+  function isAdmin(){return request.auth != null && request.auth.token.email_verified == true && request.auth.uid in ["5KgMz6p7RKeD75aSzaaan4Yodyb2", "nyD7LWscXQQV7cYkuSnx7qcRktF3"] && request.auth.token.email in ["admin@amcinfotech.com", "nishantsharma57057@gmail.com"]; }
   match /products/{productId} { allow read: if resource.data.active != false || isAdmin(); allow create, update, delete: if isAdmin(); }
  }
 }
