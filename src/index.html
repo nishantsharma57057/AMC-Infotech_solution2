@@ -7,7 +7,7 @@
 <title>AMC Infotech Solution | Buy & Sell Laptops in Agra</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"><script defer src="catalogue.js"></script><script defer src="app.js"></script>
+<link rel="stylesheet" href="style.css"><script defer src="catalogue.js"></script><script defer src="app.js"></script><script type="module" src="firebase-catalogue.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -16,7 +16,7 @@
 <div class="header-main wrap"><a href="#home" class="brand" aria-label="AMC Infotech Solution home"><strong>amc<span class="brand-star" aria-hidden="true"></span></strong><small>INFOTECH SOLUTION</small></a>
 <form id="globalSearch" class="global-search" role="search"><span data-icon="search"></span><input name="q" id="globalQuery" aria-label="Search laptops" placeholder="Try “MacBook M1” or “Dell i5”…" autocomplete="off"><button aria-label="Search catalogue" type="submit">Search</button></form>
 <div class="header-actions"><button id="savedOpen" class="icon-button" aria-label="Open saved laptops"><span data-icon="heart"></span><b id="savedCount">0</b></button><button id="bagOpen" class="icon-button" aria-label="Open enquiry bag"><span data-icon="bag"></span><b id="bagCount">0</b></button><a class="button compact" href="#sell">Sell a laptop →</a><button class="icon-button mobile-menu" id="menuToggle" aria-label="Open menu" aria-expanded="false"><span data-icon="menu"></span></button></div></div>
-<nav class="wrap" id="mainNav" aria-label="Main navigation"><a href="#shop">Shop all laptops</a><a href="#shop?brand=Apple">Apple MacBooks <span>→</span></a><a href="#shop?os=Windows">Windows laptops</a><a href="#sell">Sell / exchange</a><a href="#grades">Understand conditions</a><a href="#reviews">Customer reviews</a><a href="#visit" class="nav-location">Visit us <span data-icon="pin"></span></a></nav>
+<nav class="wrap" id="mainNav" aria-label="Main navigation"><a href="#shop">Shop all laptops</a><a href="#shop?brand=Apple">Apple MacBooks <span>→</span></a><a href="#shop?os=Windows">Windows laptops</a><a href="#sell">Sell / exchange</a><a href="/admin.html" rel="nofollow">Admin</a><a href="#grades">Understand conditions</a><a href="#reviews">Customer reviews</a><a href="#visit" class="nav-location">Visit us <span data-icon="pin"></span></a></nav>
 </header>
 <div class="preview-note">Preview catalogue · Prices, configurations and availability are illustrative. Confirm the exact unit and store terms before purchase.</div>
 <main id="main" tabindex="-1">
