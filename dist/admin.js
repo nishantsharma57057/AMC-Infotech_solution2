@@ -38,7 +38,7 @@ function show(selector, visible) {
 function isAuthorizedAdmin(user) {
   const email = (user.email || "").toLowerCase();
   return authorizedAdmins.some(admin =>
-    admin.uid === user.uid && admin.email.toLowerCase() === email
+    admin.uids.includes(user.uid) && admin.email.toLowerCase() === email
   );
 }
 
