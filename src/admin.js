@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   sendEmailVerification,
-  reload
+  reload,
+  getIdToken
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 import {
   getFirestore,
@@ -57,6 +58,8 @@ async function openDashboard(user) {
     return;
   }
 
+  // Refresh the ID token so Firestore receives the updated email_verified claim.
+  await getIdToken(user, true);
   show("#login", false);
   show("#verify", false);
   show("#dashboard", true);
