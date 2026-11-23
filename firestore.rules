@@ -1,7 +1,30 @@
 rules_version = '2';
+
 service cloud.firestore {
- match /databases/{database}/documents {
-  function isAdmin(){return request.auth != null && request.auth.token.email_verified == true && request.auth.uid in ["5KgMz6p7RKeD75aSzaaan4Yodyb2", "nyD7LWscXQQV7cYkuSnx7qcRktF3"] && request.auth.token.email in ["admin@amcinfotech.com", "nishantsharma57057@gmail.com"]; }
-  match /products/{productId} { allow read: if resource.data.active != false || isAdmin(); allow create, update, delete: if isAdmin(); }
- }
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && (
+          (
+            request.auth.uid == "5KgMz6p7RKeD75aSzaaan4Yody"
+            && request.auth.token.email == "admin@amcinfotech.com"
+          )
+          ||
+          (
+            request.auth.uid == "nyD7LWscXQQV7cYkuSnx7qcRktF3"
+            && request.auth.token.email == "nishantsharma57057@gmail.com"
+          )
+        );
+    }
+
+    match /products/{productId} {
+      // Public visitors can read only published products.
+      // Verified AMC admins can read the full inventory.
+      allow get, list: if isAdmin() || resource.data.active == true;
+
+      // Only the two verified AMC admin accounts can change inventory.
+      allow create, update, delete: if isAdmin();
+    }
+  }
 }
