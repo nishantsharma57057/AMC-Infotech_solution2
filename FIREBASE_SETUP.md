@@ -4,7 +4,7 @@
 1. Open the Firebase project `amc-infotech-solution`.
 2. In Authentication > Sign-in method, enable **Email/Password**.
 3. In Authentication > Users, make sure these two users exist:
-   - `admin@amcinfotech.com` — UID `5KgMz6p7RKeD75aSzaaan4Yody` or `5KgMz6p7RKeD75aSzaaan4Yodyb2` (the pasted records differ; the app safely scopes both to this same exact email)
+   - `admin@amcinfotech.com` — UID `5KgMz6p7RKeD75aSzaaan4Yodyb2`
    - `nishantsharma57057@gmail.com` — UID `nyD7LWscXQQV7cYkuSnx7qcRktF3`
 4. Open each account at `/admin.html` and sign in. If its email is unverified, the page offers **Resend verification email**. Open the email link, return to the admin page and choose **I've verified — check again**.
 5. Add the website's production domain in Authentication > Settings > Authorized domains.
