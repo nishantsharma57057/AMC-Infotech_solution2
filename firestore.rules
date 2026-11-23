@@ -7,7 +7,10 @@ service cloud.firestore {
         && request.auth.token.email_verified == true
         && (
           (
-            request.auth.uid == "5KgMz6p7RKeD75aSzaaan4Yody"
+            request.auth.uid in [
+              "5KgMz6p7RKeD75aSzaaan4Yody",
+              "5KgMz6p7RKeD75aSzaaan4Yodyb2"
+            ]
             && request.auth.token.email == "admin@amcinfotech.com"
           )
           ||
