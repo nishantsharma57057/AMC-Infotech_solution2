@@ -10,14 +10,10 @@ export const firebaseConfig = {
   measurementId: "G-K1WM63VJ3V"
 };
 
-// The first account's UID was pasted in two forms in the setup conversation.
-// Both variants are scoped to the same exact verified email while the record is confirmed.
+// Admin access requires the exact Firebase UID and matching verified email.
 export const authorizedAdmins = [
   {
-    uids: [
-      "5KgMz6p7RKeD75aSzaaan4Yody",
-      "5KgMz6p7RKeD75aSzaaan4Yodyb2"
-    ],
+    uids: ["5KgMz6p7RKeD75aSzaaan4Yodyb2"],
     email: "admin@amcinfotech.com"
   },
   {
