@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>AMC Admin | Inventory</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+  <main class="admin-shell">
+    <header class="admin-head">
+      <a href="/" class="brand"><strong>amc</strong><small>INFOTECH SOLUTION</small></a>
+      <h1>Inventory Admin</h1>
+      <button id="logout" class="button outline admin-hidden" type="button">Sign out</button>
+    </header>
+
+    <section id="setup" class="admin-card admin-hidden">
+      <h2>Firebase setup required</h2>
+      <p>Complete FIREBASE_SETUP.md and configure src/firebase-config.js.</p>
+    </section>
+
+    <section id="login" class="admin-card admin-login">
+      <h2>Admin sign in</h2>
+      <form id="loginForm">
+        <div class="admin-field">
+          <label for="adminEmail">Email</label>
+          <input id="adminEmail" name="email" type="email" autocomplete="username" required>
+        </div>
+        <div class="admin-field">
+          <label for="adminPassword">Password</label>
+          <input id="adminPassword" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="button" style="margin-top:16px" type="submit">Sign in</button>
+      </form>
+      <p id="loginStatus" class="admin-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="verify" class="admin-card admin-login admin-hidden">
+      <h2>Verify your email</h2>
+      <p>This AMC admin account is approved, but Firebase has not marked its email as verified yet.</p>
+      <p><strong id="verifyEmail"></strong></p>
+      <div class="admin-actions">
+        <button id="resendVerification" class="button" type="button">Resend verification email</button>
+        <button id="checkVerification" class="button outline" type="button">I've verified — check again</button>
+      </div>
+      <p id="verifyStatus" class="admin-status" role="status" aria-live="polite">Open the verification email, click its link, then return here and check again.</p>
+    </section>
+
+    <section id="dashboard" class="admin-hidden">
+      <div class="admin-card">
+        <h2 id="formTitle">Add laptop</h2>
+        <form id="productForm" class="admin-form">
+          <input type="hidden" name="id">
+          <div class="admin-field"><label>Brand</label><select name="brand"><option>Apple</option><option>Dell</option><option>HP</option><option>Lenovo</option><option>ASUS</option><option>Acer</option><option>Samsung</option></select></div>
+          <div class="admin-field"><label>Product name</label><input name="name" required placeholder="MacBook Air M2"></div>
+          <div class="admin-field"><label>Model</label><input name="model" required></div>
+          <div class="admin-field"><label>Processor / chip</label><input name="chip" required></div>
+          <div class="admin-field"><label>RAM (GB)</label><input name="ram" type="number" min="4" required></div>
+          <div class="admin-field"><label>Storage (GB)</label><input name="storage" type="number" min="64" required></div>
+          <div class="admin-field"><label>Price (₹)</label><input name="price" type="number" min="1" required></div>
+          <div class="admin-field"><label>Quantity</label><input name="qty" type="number" min="0" required></div>
+          <div class="admin-field"><label>Warranty</label><input name="warranty" placeholder="Not specified"></div>
+          <div class="admin-field"><label>Condition</label><select name="condition"><option>Refurbished</option><option>Excellent</option><option>Good</option><option>Fair</option><option>New</option></select></div>
+          <div class="admin-field full"><label>Product image URL (HTTPS)</label><input name="imageUrl" type="url" placeholder="https://..."></div>
+          <div class="admin-field full"><label>Description</label><textarea name="desc" rows="3"></textarea></div>
+          <div class="admin-field"><label>Published</label><select name="active"><option value="true">Yes</option><option value="false">No</option></select></div>
+          <div class="admin-field"><label>Use cases</label><input name="use" value="Students, Office, Programming"></div>
+          <div class="admin-field full admin-actions">
+            <button class="button" type="submit">Save laptop</button>
+            <button type="button" id="clear" class="button outline">Clear</button>
+          </div>
+        </form>
+        <p id="saveStatus" class="admin-status" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="admin-card" style="margin-top:20px">
+        <h2>Inventory</h2>
+        <p id="count" class="admin-muted"></p>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Image</th><th>Product</th><th>Specs</th><th>Qty</th><th>Price</th><th>Actions</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
