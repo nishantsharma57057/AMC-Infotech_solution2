@@ -10,15 +10,18 @@ export const firebaseConfig = {
   measurementId: "G-K1WM63VJ3V"
 };
 
-// Access is granted only when BOTH the Firebase UID and email match.
-// Users must also verify their email address before entering the dashboard.
+// The first account's UID was pasted in two forms in the setup conversation.
+// Both variants are scoped to the same exact verified email while the record is confirmed.
 export const authorizedAdmins = [
   {
-    uid: "5KgMz6p7RKeD75aSzaaan4Yody",
+    uids: [
+      "5KgMz6p7RKeD75aSzaaan4Yody",
+      "5KgMz6p7RKeD75aSzaaan4Yodyb2"
+    ],
     email: "admin@amcinfotech.com"
   },
   {
-    uid: "nyD7LWscXQQV7cYkuSnx7qcRktF3",
+    uids: ["nyD7LWscXQQV7cYkuSnx7qcRktF3"],
     email: "nishantsharma57057@gmail.com"
   }
 ];
