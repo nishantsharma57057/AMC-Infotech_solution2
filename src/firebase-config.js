@@ -12,7 +12,7 @@ export const firebaseConfig = {
 
 // Replace this with the exact email address you create and verify in Firebase Authentication.
 // Also use the same email in firestore.rules before publishing the rules.
-export const adminEmails = ["admin@amcinfotech.com"];
+export const adminEmails = ["admin@amcinfotech.com", "nishantsharma57057@gmail.com"];
 
 export const configured =
   !Object.values(firebaseConfig).some(value => String(value).startsWith("PASTE_")) &&
