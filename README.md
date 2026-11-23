@@ -59,3 +59,8 @@ The map and Google Fonts use external resources. All product images and site cod
 
 Checked JavaScript syntax and browser flows for combined Apple + 16 GB + 512 GB filters, model/processor search, condition-price changes, photo angles, saved-laptop persistence, comparison and both text downloads. Desktop screenshots were reviewed. Mobile CSS is included; a dedicated mobile browser viewport was not available in this session.
 >>>>>>> dd07cfe (Initial commit)
+
+
+## Admin inventory panel
+
+Firebase-powered inventory manager: `/admin.html`. Configure Firebase Authentication, Firestore, the admin email allowlist and rules using `FIREBASE_SETUP.md` before launch. Supports add/edit/hide/delete; images are HTTPS URLs.
