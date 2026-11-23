@@ -20,6 +20,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import { firebaseConfig, authorizedAdmins, configured } from "./firebase-config.js";
+import { seedInventory } from "./seed-inventory.js";
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -219,13 +220,47 @@ $("#refreshBtn").addEventListener("click", async () => {
 
 async function loadProducts() {
   try {
-    const snapshot = await getDocs(collection(db, "products"));
+    let snapshot = await getDocs(collection(db, "products"));
+    const existingIds = new Set(snapshot.docs.map(document => document.id));
+
+    // The original public catalogue was bundled in catalogue.js, not stored in Firestore.
+    // Import only missing IDs once, preserving any product an admin has already edited.
+    const missingSeedItems = seedInventory.filter(item => !existingIds.has(String(item.id)));
+    if (missingSeedItems.length) {
+      await Promise.all(missingSeedItems.map(item => {
+        const ram = Number.parseInt(String(item.ram || ""), 10) || 8;
+        const storage = Number.parseInt(String(item.storage || ""), 10) || 256;
+        const qty = Number.isFinite(Number(item.qty)) ? Number(item.qty) : (item.available === false ? 0 : 1);
+        const product = {
+          brand: item.brand || "Other",
+          name: item.name || "Laptop",
+          model: item.model || item.id,
+          chip: item.chip || item.processor || "Not specified",
+          ram,
+          storage,
+          price: Number(item.price) || 0,
+          qty,
+          warranty: item.warranty || "Not specified",
+          condition: "Refurbished",
+          imageUrl: item.imageUrl || "",
+          desc: item.desc || "",
+          use: Array.isArray(item.use) ? item.use : ["Office", "Students"],
+          active: true,
+          legacyCatalogueImport: true,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+        return setDoc(doc(db, "products", String(item.id)), product);
+      }));
+      snapshot = await getDocs(collection(db, "products"));
+      notify(missingSeedItems.length + " existing website listings imported into Firebase inventory.");
+    }
+
     products = snapshot.docs.map(document => ({ id: document.id, ...document.data() }));
-    // Legacy product documents without an active field were previously treated as visible.
-    // Preserve that behaviour and persist the status so the public active-only query can show them.
+    // Old Firebase documents without an active field remain published by default.
     const legacy = snapshot.docs.filter(document => typeof document.data().active !== "boolean");
     if (legacy.length) {
-      await Promise.allSettled(legacy.map(document =>
+      await Promise.all(legacy.map(document =>
         updateDoc(doc(db, "products", document.id), { active: true, updatedAt: serverTimestamp() })
       ));
       products = products.map(product => product.active === undefined ? { ...product, active: true } : product);
