@@ -20,10 +20,18 @@ service cloud.firestore {
 
     match /products/{productId} {
       // Public visitors can read only published products.
-      // Verified AMC admins can read the full inventory.
+      // Verified AMC admins can read the complete inventory.
       allow get, list: if isAdmin() || resource.data.active == true;
 
-      // Only the two verified AMC admin accounts can change inventory.
+      // Only verified AMC admins can create, edit, publish, hide or delete products.
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /siteSettings/{settingId} {
+      // The public website reads only its single public business-profile document.
+      allow get: if settingId == "public";
+      allow list: if isAdmin();
+      // Only verified AMC admins can update business contact and social details.
       allow create, update, delete: if isAdmin();
     }
   }
