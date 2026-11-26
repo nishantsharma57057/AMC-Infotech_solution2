@@ -16,6 +16,8 @@ const photoRegions={
  'hp-elitebook-840':[[0,0,650,627],[650,0,604,627],[0,627,650,627],[650,627,604,627]]
 };
 function photoMarkup(p,index=0,extra=''){
+ const galleryImages=Array.isArray(p.galleryImages)&&p.galleryImages.length?p.galleryImages:(p.imageUrl?[p.imageUrl]:[]);
+ if(galleryImages.length){const image=galleryImages[index%galleryImages.length];return '<span class="photo-sprite '+extra+'"><span class="photo-crop"><img src="'+String(image).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" alt="'+String(p.name).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" loading="lazy" style="width:100%;height:100%;object-fit:contain;left:0;top:0"></span></span>'}
  if(p.imageUrl)return '<span class="photo-sprite '+extra+'"><span class="photo-crop"><img src="'+String(p.imageUrl).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" alt="'+String(p.name).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" loading="lazy" style="width:100%;height:100%;object-fit:contain;left:0;top:0"></span></span>';
  const g=galleries[p.id],w=g.rows===1?1774:1254,h=g.rows===1?887:1254;
  const r=photoRegions[p.id]?.[index]||[index%g.cols*w/g.cols,Math.floor(index/g.cols)*h/g.rows,w/g.cols,h/g.rows];
