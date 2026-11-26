@@ -189,7 +189,8 @@
         <label class="admin-input-label">Quantity<input name="qty" type="number" min="0" required></label>
         <label class="admin-input-label">Condition<select name="condition"><option>Refurbished</option><option>Excellent</option><option>Good</option><option>Fair</option><option>New</option></select></label>
         <label class="admin-input-label">Warranty<input name="warranty" maxlength="120" placeholder="Not specified"></label>
-        <label class="admin-input-label admin-span-2">Product image URL (HTTPS)<input name="imageUrl" type="url" placeholder="https://..."></label>
+        <input type="hidden" name="imageUrl">
+        <label class="admin-input-label admin-span-2 admin-image-upload-label">Product image<input name="imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><small>Choose a product photo (JPG, PNG, WEBP or AVIF, up to 8 MB). Existing image stays unless replaced.</small><span class="admin-image-preview"><img id="productImagePreview" alt="Selected product image preview" hidden><span id="productImagePreviewEmpty">No image selected yet</span></span></label>
         <label class="admin-input-label admin-span-2">Description<textarea name="desc" rows="3" maxlength="1000" placeholder="Battery health, included accessories, unit notes..."></textarea></label>
         <label class="admin-input-label admin-span-2">Use cases (comma separated)<input name="use" value="Students, Office, Programming"></label>
         <label class="admin-toggle-field"><input name="active" type="checkbox" checked><span><b>Publish on website</b><small>Visible in the public Shop catalogue</small></span></label>

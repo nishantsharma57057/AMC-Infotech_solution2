@@ -20,6 +20,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 import { firebaseConfig, authorizedAdmins, configured } from "./firebase-config.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-storage.js";
 import { seedInventory } from "./seed-inventory.js";
 
 const $ = selector => document.querySelector(selector);
@@ -57,6 +58,7 @@ const DEFAULT_SETTINGS = {
 
 let auth;
 let db;
+let firebaseStorage;
 let products = [];
 let siteSettings = { ...DEFAULT_SETTINGS };
 let currentView = "overview";
@@ -117,6 +119,7 @@ if (!configured) {
   const app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  firebaseStorage = getStorage(app);
 
   onAuthStateChanged(auth, async user => {
     try {
@@ -401,15 +404,31 @@ $("#productRows").addEventListener("click", async event => {
   }
 });
 
+function setProductImagePreview(url = "") {
+  const image = $("#productImagePreview");
+  const empty = $("#productImagePreviewEmpty");
+  if (url) {
+    image.src = url;
+    image.hidden = false;
+    empty.hidden = true;
+  } else {
+    image.removeAttribute("src");
+    image.hidden = true;
+    empty.hidden = false;
+  }
+}
+
 function openProductDialog(product = null) {
   const form = $("#productForm");
   form.reset();
   form.elements.namedItem("id").value = product?.id || "";
+  form.elements.namedItem("imageUrl").value = product?.imageUrl || "";
   form.elements.namedItem("active").checked = product ? isPublished(product) : true;
   $("#productDialogTitle").textContent = product ? "Edit laptop" : "Add a laptop";
   $("#productFormStatus").textContent = "";
+  setProductImagePreview(product?.imageUrl || "");
   if (product) {
-    for (const key of ["brand", "name", "model", "chip", "ram", "storage", "price", "qty", "condition", "warranty", "imageUrl", "desc"]) {
+    for (const key of ["brand", "name", "model", "chip", "ram", "storage", "price", "qty", "condition", "warranty", "desc"]) {
       const field = form.elements.namedItem(key);
       if (field) field.value = product[key] ?? "";
     }
@@ -420,6 +439,20 @@ function openProductDialog(product = null) {
   $("#productDialog").showModal();
 }
 
+$("#productForm").elements.namedItem("imageFile").addEventListener("change", event => {
+  const file = event.currentTarget.files?.[0];
+  if (!file) {
+    setProductImagePreview($("#productForm").elements.namedItem("imageUrl").value);
+    return;
+  }
+  if (!file.type.startsWith("image/")) {
+    event.currentTarget.value = "";
+    $("#productFormStatus").textContent = "Please select an image file.";
+    return;
+  }
+  setProductImagePreview(URL.createObjectURL(file));
+  $("#productFormStatus").textContent = file.name;
+});
 function closeProductDialog() {
   $("#productDialog").close();
 }
@@ -430,11 +463,7 @@ $("#productForm").addEventListener("submit", async event => {
   const form = event.currentTarget;
   const data = new FormData(form);
   const id = String(data.get("id") || "laptop-" + crypto.randomUUID());
-  const imageUrl = String(data.get("imageUrl") || "").trim();
-  if (imageUrl && !imageUrl.startsWith("https://")) {
-    $("#productFormStatus").textContent = "Product images must use an HTTPS URL.";
-    return;
-  }
+  const imageFile = data.get("imageFile");
   const product = {
     brand: String(data.get("brand") || "Other"),
     name: String(data.get("name") || "").trim(),
@@ -446,7 +475,7 @@ $("#productForm").addEventListener("submit", async event => {
     qty: Number(data.get("qty")),
     warranty: String(data.get("warranty") || "Not specified").trim(),
     condition: String(data.get("condition") || "Refurbished"),
-    imageUrl,
+    imageUrl: String(data.get("imageUrl") || "").trim(),
     desc: String(data.get("desc") || "").trim(),
     active: form.elements.namedItem("active").checked,
     use: String(data.get("use") || "").split(",").map(value => value.trim()).filter(Boolean),
@@ -456,7 +485,22 @@ $("#productForm").addEventListener("submit", async event => {
     $("#productFormStatus").textContent = "Please complete the required product details.";
     return;
   }
+  if (imageFile instanceof File && imageFile.size > 8 * 1024 * 1024) {
+    $("#productFormStatus").textContent = "Image must be 8 MB or smaller.";
+    return;
+  }
+  if (imageFile instanceof File && !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(imageFile.type)) {
+    $("#productFormStatus").textContent = "Use a JPG, PNG, WEBP or AVIF image.";
+    return;
+  }
   try {
+    if (imageFile instanceof File && imageFile.size > 0) {
+      $("#productFormStatus").textContent = "Uploading product image…";
+      const safeFileName = imageFile.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100) || "product-image";
+      const imageRef = storageRef(firebaseStorage, "product-images/" + id + "/" + Date.now() + "-" + safeFileName);
+      const uploaded = await uploadBytes(imageRef, imageFile, { contentType: imageFile.type });
+      product.imageUrl = await getDownloadURL(uploaded.ref);
+    }
     $("#productFormStatus").textContent = "Saving to Firebase…";
     const payload = { ...product };
     if (!form.elements.namedItem("id").value) payload.createdAt = serverTimestamp();
