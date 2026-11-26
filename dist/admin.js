@@ -530,7 +530,7 @@ $("#productForm").addEventListener("submit", async event => {
         product.galleryImages.push(await getDownloadURL(uploaded.ref));
       }
     }
-    product.imageUrl = product.galleryImages[0] || product.imageUrl || "";
+    product.imageUrl = product.galleryImages.length ? product.galleryImages[0] : "";
     $("#productFormStatus").textContent = "Saving to Firebase…";
     const payload = { ...product };
     if (!form.elements.namedItem("id").value) payload.createdAt = serverTimestamp();
