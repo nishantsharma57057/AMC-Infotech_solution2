@@ -436,7 +436,9 @@ function openProductDialog(product = null) {
   const form = $("#productForm");
   form.reset();
   form.elements.namedItem("id").value = product?.id || "";
-  form.elements.namedItem("imageUrl").value = product?.imageUrl || "";\n  retainedGalleryImages = Array.isArray(product?.galleryImages) ? [...product.galleryImages] : (product?.imageUrl ? [product.imageUrl] : []);\n  renderAdminGallery();
+  form.elements.namedItem("imageUrl").value = product?.imageUrl || "";
+  retainedGalleryImages = Array.isArray(product?.galleryImages) ? [...product.galleryImages] : (product?.imageUrl ? [product.imageUrl] : []);
+  renderAdminGallery();
   form.elements.namedItem("active").checked = product ? isPublished(product) : true;
   $("#productDialogTitle").textContent = product ? "Edit laptop" : "Add a laptop";
   $("#productFormStatus").textContent = "";
@@ -454,7 +456,8 @@ function openProductDialog(product = null) {
 }
 
 $("#productForm").elements.namedItem("imageFiles").addEventListener("change", event => {
-  const files = [...(event.currentTarget.files || [])];\n  const file = files[0];
+  const files = [...(event.currentTarget.files || [])];
+  const file = files[0];
   if (!file) {
     setProductImagePreview($("#productForm").elements.namedItem("imageUrl").value);
     return;
@@ -465,6 +468,7 @@ $("#productForm").elements.namedItem("imageFiles").addEventListener("change", ev
     return;
   }
   setProductImagePreview(URL.createObjectURL(file));
+  $("#productGallerySelected").textContent = files.length + " new photo(s) selected: " + files.map(file => file.name).join(", ");
   $("#productFormStatus").textContent = file.name;
 });
 function closeProductDialog() {
@@ -490,6 +494,15 @@ $("#productForm").addEventListener("submit", async event => {
     warranty: String(data.get("warranty") || "Not specified").trim(),
     condition: String(data.get("condition") || "Refurbished"),
     imageUrl: String(data.get("imageUrl") || "").trim(),
+    galleryImages: [...retainedGalleryImages],
+    screen: String(data.get("screen") || "").trim(),
+    os: String(data.get("os") || "").trim(),
+    batteryHealth: String(data.get("batteryHealth") || "").trim(),
+    cycleCount: String(data.get("cycleCount") || "").trim(),
+    serialNumber: String(data.get("serialNumber") || "").trim(),
+    repairs: String(data.get("repairs") || "").trim(),
+    accessories: String(data.get("accessories") || "").trim(),
+    returnPolicy: String(data.get("returnPolicy") || "").trim(),
     desc: String(data.get("desc") || "").trim(),
     active: form.elements.namedItem("active").checked,
     use: String(data.get("use") || "").split(",").map(value => value.trim()).filter(Boolean),
