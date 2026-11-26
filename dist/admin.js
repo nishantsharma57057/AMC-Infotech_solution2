@@ -418,17 +418,31 @@ function setProductImagePreview(url = "") {
   }
 }
 
+let retainedGalleryImages = [];
+function renderAdminGallery() {
+  const container = $("#productGalleryExisting"); container.innerHTML = "";
+  retainedGalleryImages.forEach((url, index) => {
+    const item = document.createElement("span"); item.className = "admin-gallery-thumb";
+    const image = document.createElement("img"); image.src = url; image.alt = "Saved product photo";
+    const button = document.createElement("button"); button.type = "button"; button.textContent = "Remove"; button.dataset.removeGallery = String(index);
+    item.append(image, button); container.append(item);
+  });
+}
+$("#productGalleryExisting").addEventListener("click", event => {
+  const button = event.target.closest("[data-remove-gallery]"); if (!button) return;
+  retainedGalleryImages.splice(Number(button.dataset.removeGallery), 1); renderAdminGallery();
+});
 function openProductDialog(product = null) {
   const form = $("#productForm");
   form.reset();
   form.elements.namedItem("id").value = product?.id || "";
-  form.elements.namedItem("imageUrl").value = product?.imageUrl || "";
+  form.elements.namedItem("imageUrl").value = product?.imageUrl || "";\n  retainedGalleryImages = Array.isArray(product?.galleryImages) ? [...product.galleryImages] : (product?.imageUrl ? [product.imageUrl] : []);\n  renderAdminGallery();
   form.elements.namedItem("active").checked = product ? isPublished(product) : true;
   $("#productDialogTitle").textContent = product ? "Edit laptop" : "Add a laptop";
   $("#productFormStatus").textContent = "";
   setProductImagePreview(product?.imageUrl || "");
   if (product) {
-    for (const key of ["brand", "name", "model", "chip", "ram", "storage", "price", "qty", "condition", "warranty", "desc"]) {
+    for (const key of ["brand", "name", "model", "chip", "ram", "storage", "price", "qty", "condition", "warranty", "desc", "screen", "os", "batteryHealth", "cycleCount", "serialNumber", "repairs", "accessories", "returnPolicy"]) {
       const field = form.elements.namedItem(key);
       if (field) field.value = product[key] ?? "";
     }
@@ -439,8 +453,8 @@ function openProductDialog(product = null) {
   $("#productDialog").showModal();
 }
 
-$("#productForm").elements.namedItem("imageFile").addEventListener("change", event => {
-  const file = event.currentTarget.files?.[0];
+$("#productForm").elements.namedItem("imageFiles").addEventListener("change", event => {
+  const files = [...(event.currentTarget.files || [])];\n  const file = files[0];
   if (!file) {
     setProductImagePreview($("#productForm").elements.namedItem("imageUrl").value);
     return;
@@ -463,7 +477,7 @@ $("#productForm").addEventListener("submit", async event => {
   const form = event.currentTarget;
   const data = new FormData(form);
   const id = String(data.get("id") || "laptop-" + crypto.randomUUID());
-  const imageFile = data.get("imageFile");
+  const imageFiles = [...(form.elements.namedItem("imageFiles").files || [])];
   const product = {
     brand: String(data.get("brand") || "Other"),
     name: String(data.get("name") || "").trim(),
@@ -485,22 +499,25 @@ $("#productForm").addEventListener("submit", async event => {
     $("#productFormStatus").textContent = "Please complete the required product details.";
     return;
   }
-  if (imageFile instanceof File && imageFile.size > 8 * 1024 * 1024) {
+  if (imageFiles.some(file => file.size > 8 * 1024 * 1024)) {
     $("#productFormStatus").textContent = "Image must be 8 MB or smaller.";
     return;
   }
-  if (imageFile instanceof File && !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(imageFile.type)) {
+  if (imageFiles.some(file => !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type))) {
     $("#productFormStatus").textContent = "Use a JPG, PNG, WEBP or AVIF image.";
     return;
   }
   try {
-    if (imageFile instanceof File && imageFile.size > 0) {
-      $("#productFormStatus").textContent = "Uploading product image…";
-      const safeFileName = imageFile.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100) || "product-image";
-      const imageRef = storageRef(firebaseStorage, "product-images/" + id + "/" + Date.now() + "-" + safeFileName);
-      const uploaded = await uploadBytes(imageRef, imageFile, { contentType: imageFile.type });
-      product.imageUrl = await getDownloadURL(uploaded.ref);
+    if (imageFiles.length) {
+      $("#productFormStatus").textContent = "Uploading product gallery…";
+      for (const imageFile of imageFiles) {
+        const safeFileName = imageFile.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100) || "product-image";
+        const imageRef = storageRef(firebaseStorage, "product-images/" + id + "/" + Date.now() + "-" + safeFileName);
+        const uploaded = await uploadBytes(imageRef, imageFile, { contentType: imageFile.type });
+        product.galleryImages.push(await getDownloadURL(uploaded.ref));
+      }
     }
+    product.imageUrl = product.galleryImages[0] || product.imageUrl || "";
     $("#productFormStatus").textContent = "Saving to Firebase…";
     const payload = { ...product };
     if (!form.elements.namedItem("id").value) payload.createdAt = serverTimestamp();
